@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Environment, PerspectiveCamera } from '@react-three/drei';
+import { OrbitControls, Environment, PerspectiveCamera, Image } from '@react-three/drei';
 import * as THREE from 'three';
 
 const Hero = () => {
   const [currentText, setCurrentText] = useState('');
   const [isTypingComplete, setIsTypingComplete] = useState(false);
-  const phrase = 'Full-Stack Developer';
+  const phrase = 'Engineering Student';
 
   useEffect(() => {
     if (isTypingComplete) return;
@@ -95,80 +95,134 @@ const Hero = () => {
   );
 };
 
-// Scène complète du bureau professionnel
+// Scène complète du bureau professionnel réaliste
 const DeskScene = () => {
   return (
     <group>
-      {/* Plan de travail (Bureau) - Surface en bois clair */}
+      {/* Image du bureau réel en arrière-plan 3D */}
+      <Image 
+        url="/assets/computer-desk-decor-contemporary-with-supplies-and-decorations-in-3d-rendering_9633584.jpg"
+        position={[0, 0.5, -1.8]}
+        scale={[5, 3.5]}
+        rotation={[0, 0, 0]}
+      />
+
+      {/* Plan de travail (Bureau) - Surface en bois clair réaliste avec texture */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]} receiveShadow>
         <planeGeometry args={[4, 2]} />
         <meshStandardMaterial 
-          color="#D4A574" 
-          roughness={0.7}
-          metalness={0.1}
+          color="#C9A961" 
+          roughness={0.8}
+          metalness={0.05}
         />
       </mesh>
 
-      {/* Écran d'ordinateur */}
-      <group position={[0, 0.6, -0.3]}>
-        {/* Support de l'écran */}
-        <mesh position={[0, -0.3, 0]} castShadow>
-          <boxGeometry args={[0.1, 0.6, 0.1]} />
-          <meshStandardMaterial color="#2a2a2a" metalness={0.8} roughness={0.2} />
+      {/* Écran d'ordinateur iMac style professionnel */}
+      <group position={[0, 0.65, -0.35]}>
+        {/* Support de l'écran (pied mince) */}
+        <mesh position={[0, -0.4, 0]} castShadow>
+          <cylinderGeometry args={[0.08, 0.08, 0.8]} />
+          <meshStandardMaterial color="#c0c0c0" metalness={0.95} roughness={0.1} />
         </mesh>
         
-        {/* Écran principal */}
-        <mesh position={[0, 0.1, 0]} castShadow>
-          <boxGeometry args={[1.2, 0.7, 0.05]} />
-          <meshStandardMaterial color="#1a1a1a" metalness={0.9} roughness={0.1} />
+        {/* Base du support */}
+        <mesh position={[0, -0.8, 0]} castShadow>
+          <cylinderGeometry args={[0.15, 0.08, 0.05]} />
+          <meshStandardMaterial color="#c0c0c0" metalness={0.95} roughness={0.1} />
         </mesh>
         
-        {/* Écran allumé */}
-        <mesh position={[0, 0.1, 0.03]}>
-          <planeGeometry args={[1.1, 0.65]} />
+        {/* Écran principal (iMac style) */}
+        <mesh position={[0, 0.05, 0]} castShadow>
+          <boxGeometry args={[1.4, 0.85, 0.08]} />
+          <meshStandardMaterial color="#d1d1d1" metalness={0.9} roughness={0.15} />
+        </mesh>
+        
+        {/* Bordure de l'écran */}
+        <mesh position={[0, 0.05, 0.045]}>
+          <boxGeometry args={[1.42, 0.87, 0.01]} />
+          <meshStandardMaterial color="#000" metalness={0.95} roughness={0.1} />
+        </mesh>
+        
+        {/* Écran allumé - plus réaliste */}
+        <mesh position={[0, 0.05, 0.042]}>
+          <planeGeometry args={[1.35, 0.80]} />
           <meshStandardMaterial 
-            emissive="#00aaff" 
-            emissiveIntensity={0.6}
-            color="#001122"
+            emissive="#4a9eff" 
+            emissiveIntensity={0.8}
+            color="#0a1929"
+            roughness={0.1}
           />
         </mesh>
       </group>
 
-      {/* Clavier */}
-      <mesh position={[0, 0.08, 0.3]} rotation={[-0.1, 0, 0]} castShadow>
-        <boxGeometry args={[0.8, 0.05, 0.3]} />
-        <meshStandardMaterial color="#333" metalness={0.3} roughness={0.7} />
-      </mesh>
-
-      {/* Souris */}
-      <mesh position={[0.5, 0.08, 0.4]} rotation={[-0.1, 0, 0.1]} castShadow>
-        <boxGeometry args={[0.12, 0.06, 0.18]} />
-        <meshStandardMaterial color="#222" metalness={0.5} roughness={0.6} />
-      </mesh>
-
-      {/* Lampe de bureau */}
-      <group position={[-0.6, 0.5, 0.2]}>
+      {/* Clavier Magic Keyboard style Apple */}
+      <group position={[0, 0.1, 0.3]} rotation={[-0.08, 0, 0]}>
         <mesh castShadow>
-          <cylinderGeometry args={[0.02, 0.02, 0.4]} />
-          <meshStandardMaterial color="#666" />
+          <boxGeometry args={[0.85, 0.04, 0.28]} />
+          <meshStandardMaterial color="#f5f5f5" metalness={0.2} roughness={0.6} />
         </mesh>
-        <mesh position={[0, 0.3, 0]} castShadow>
-          <coneGeometry args={[0.15, 0.1, 8]} />
-          <meshStandardMaterial color="#fff" emissive="#FFD700" emissiveIntensity={0.3} />
+        {/* Touches du clavier */}
+        <mesh position={[0, 0.025, 0]}>
+          <boxGeometry args={[0.83, 0.02, 0.26]} />
+          <meshStandardMaterial color="#ffffff" roughness={0.8} />
         </mesh>
-        {/* Lumière de la lampe */}
-        <pointLight position={[0, 0.35, 0]} intensity={0.8} color="#FFD700" />
       </group>
 
-      {/* Tasse de café */}
-      <group position={[0.7, 0.15, 0.2]}>
+      {/* Magic Mouse Apple - plus réaliste */}
+      <group position={[0.55, 0.1, 0.45]} rotation={[-0.08, 0, 0.15]}>
         <mesh castShadow>
-          <cylinderGeometry args={[0.08, 0.08, 0.12]} />
-          <meshStandardMaterial color="#4a2c1a" />
+          <boxGeometry args={[0.14, 0.05, 0.19]} />
+          <meshStandardMaterial color="#ffffff" metalness={0.3} roughness={0.7} />
         </mesh>
-        <mesh position={[0, 0.08, 0]} castShadow>
-          <torusGeometry args={[0.08, 0.01, 8, 16]} />
-          <meshStandardMaterial color="#8B4513" />
+        {/* Surface tactile */}
+        <mesh position={[0, 0.028, 0]}>
+          <boxGeometry args={[0.12, 0.01, 0.17]} />
+          <meshStandardMaterial color="#f0f0f0" roughness={0.5} />
+        </mesh>
+      </group>
+
+      {/* Lampe de bureau moderne et professionnelle */}
+      <group position={[-0.7, 0.6, 0.15]}>
+        {/* Bras de la lampe */}
+        <mesh rotation={[0, 0, -0.3]} castShadow>
+          <cylinderGeometry args={[0.015, 0.015, 0.5]} />
+          <meshStandardMaterial color="#2a2a2a" metalness={0.8} roughness={0.2} />
+        </mesh>
+        {/* Tête de la lampe - style moderne */}
+        <mesh position={[0.15, 0.25, 0]} rotation={[0, 0, -0.3]} castShadow>
+          <boxGeometry args={[0.3, 0.08, 0.15]} />
+          <meshStandardMaterial color="#1a1a1a" metalness={0.9} roughness={0.1} />
+        </mesh>
+        {/* Abat-jour */}
+        <mesh position={[0.15, 0.25, 0]} rotation={[0, 0, -0.3]} castShadow>
+          <coneGeometry args={[0.18, 0.12, 16]} />
+          <meshStandardMaterial color="#fff" emissive="#FFE5B4" emissiveIntensity={0.4} />
+        </mesh>
+        {/* Lumière chaude de la lampe */}
+        <pointLight position={[0.15, 0.29, 0]} intensity={1.2} color="#FFE5B4" castShadow />
+      </group>
+
+      {/* Tasse de café avec anse */}
+      <group position={[0.75, 0.18, 0.25]}>
+        {/* Corps de la tasse */}
+        <mesh castShadow>
+          <cylinderGeometry args={[0.09, 0.07, 0.14, 32]} />
+          <meshStandardMaterial color="#4a2c1a" roughness={0.6} />
+        </mesh>
+        {/* Anse */}
+        <mesh position={[0.11, 0.03, 0]} rotation={[0, 0, -0.3]} castShadow>
+          <torusGeometry args={[0.04, 0.01, 8, 16]} />
+          <meshStandardMaterial color="#5a3c2a" />
+        </mesh>
+        {/* L'intérieur de la tasse (café) */}
+        <mesh position={[0, 0.02, 0]}>
+          <cylinderGeometry args={[0.08, 0.06, 0.12, 32]} />
+          <meshStandardMaterial color="#3a2515" roughness={0.8} />
+        </mesh>
+        {/* Vapeur */}
+        <mesh position={[0, 0.15, 0]}>
+          <coneGeometry args={[0.03, 0.08, 8]} />
+          <meshStandardMaterial color="#ffffff" transparent opacity={0.3} />
         </mesh>
       </group>
 
@@ -190,11 +244,29 @@ const DeskScene = () => {
         </mesh>
       </group>
 
-      {/* Smartphone */}
-      <mesh position={[0.3, 0.1, 0.5]} rotation={[0.2, 0.3, 0.2]} castShadow>
-        <boxGeometry args={[0.08, 0.15, 0.01]} />
-        <meshStandardMaterial color="#000" metalness={0.9} roughness={0.1} />
-      </mesh>
+      {/* Smartphone iPhone style */}
+      <group position={[0.35, 0.12, 0.55]} rotation={[0.2, 0.4, 0.15]}>
+        <mesh castShadow>
+          <boxGeometry args={[0.09, 0.16, 0.015]} />
+          <meshStandardMaterial color="#1a1a1a" metalness={0.95} roughness={0.1} />
+        </mesh>
+        {/* Écran du téléphone */}
+        <mesh position={[0, 0, 0.009]}>
+          <boxGeometry args={[0.085, 0.155, 0.001]} />
+          <meshStandardMaterial 
+            color="#000" 
+            emissive="#ffffff" 
+            emissiveIntensity={0.3}
+            metalness={0.9}
+            roughness={0.05}
+          />
+        </mesh>
+        {/* Bordure métallique */}
+        <mesh position={[0, 0, 0.008]}>
+          <boxGeometry args={[0.091, 0.162, 0.002]} />
+          <meshStandardMaterial color="#c0c0c0" metalness={0.98} roughness={0.05} />
+        </mesh>
+      </group>
 
       {/* Objets décoratifs flottants (technologies) */}
       <FloatingTechIcons />
