@@ -1,7 +1,7 @@
 {
-  "name": "amine-portfolio-react",
+  "name": "mohamed-aziz-portfolio-react",
   "version": "1.0.0",
-  "description": "Hamzaoui Amine's Portfolio - React Version",
+  "description": "Mohamed Aziz ZORMATI's Portfolio - React Version",
   "main": "index.js",
   "scripts": {
     "start": "react-scripts start",

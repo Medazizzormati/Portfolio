@@ -1,20 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import Spline from '@splinetool/react-spline';
+import React, { useState, useEffect, useRef } from 'react';
+import { Canvas, useFrame, useLoader } from '@react-three/fiber';
+import { OrbitControls, Sphere, Float, useTexture } from '@react-three/drei';
+import * as THREE from 'three';
 
 const Hero = () => {
   const [currentText, setCurrentText] = useState('');
   const [isTypingComplete, setIsTypingComplete] = useState(false);
-  // Remplacez cette URL par l'URL de production de votre scène Spline
-  // Pour obtenir l'URL de production :
-  // 1. Ouvrez votre scène dans Spline : https://app.spline.design/file/72c13518-b711-4868-b96f-cc783c94fa9c
-  // 2. Cliquez sur le bouton "Export" (en haut à droite)
-  // 3. Sélectionnez "Code" dans le menu
-  // 4. Choisissez "React" comme framework
-  // 5. Copiez l'URL de production qui commence par "https://prod.spline.design/..."
-  // 6. Collez cette URL ci-dessous :
-  const splineSceneUrl = "https://prod.spline.design/your-scene-url.splinecode";
-
-  const phrase = 'Engineering Student';
+  const phrase = 'Full-Stack Developer';
 
   useEffect(() => {
     if (isTypingComplete) return;
@@ -62,20 +54,29 @@ const Hero = () => {
             </div>
           </div>
           <div className="hero-visual">
-            {splineSceneUrl && splineSceneUrl !== "https://prod.spline.design/your-scene-url.splinecode" ? (
-              <div className="spline-container">
-                <Spline 
-                  scene={splineSceneUrl}
-                  onError={(error) => {
-                    console.error('Spline error:', error);
-                  }}
+            <div className="canvas-container">
+              <Canvas camera={{ position: [0, 0, 5], fov: 50 }}>
+                <ambientLight intensity={0.5} />
+                <directionalLight position={[10, 10, 5]} intensity={1} />
+                <pointLight position={[-10, -10, -5]} intensity={0.5} />
+                
+                {/* Photo centrale avec effet 3D */}
+                <CenterSphere />
+
+                {/* Éléments flottants autour */}
+                <FloatingElements />
+                
+                {/* Contrôles pour interaction */}
+                <OrbitControls 
+                  enableZoom={false} 
+                  enablePan={false}
+                  autoRotate
+                  autoRotateSpeed={0.5}
+                  maxPolarAngle={Math.PI / 2}
+                  minPolarAngle={Math.PI / 2}
                 />
-              </div>
-            ) : (
-              <div className="spline-placeholder">
-                <p>Configurez l'URL de votre scène Spline dans Hero.js</p>
-              </div>
-            )}
+              </Canvas>
+            </div>
           </div>
         </div>
       </div>
@@ -83,104 +84,100 @@ const Hero = () => {
   );
 };
 
-const SolarSystem = () => {
-  const [orbitElements, setOrbitElements] = useState([]);
+// Sphère centrale avec photo
+const CenterSphere = () => {
+  const texture = useTexture('/aziz.png');
+  const meshRef = useRef();
 
-  useEffect(() => {
-    const techIcons = [
-      { name: 'html', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg' },
-      { name: 'css', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg' },
-      { name: 'js', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg' },
-      { name: 'react', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg' },
-      { name: 'angular', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/angularjs/angularjs-original.svg' },
-      { name: 'nodejs', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg' },
-      { name: 'spring', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/spring/spring-original.svg' },
-      { name: 'flutter', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flutter/flutter-original.svg' },
-      { name: 'python', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg' },
-      { name: 'java', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg' },
-      { name: 'mysql', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg' },
-      { name: 'mongodb', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg' },
-      { name: 'docker', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg' },
-      { name: 'git', url: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg' }
-    ];
-
-    const elements = techIcons.map((tech, index) => {
-      const startAngle = Math.random() * 360;
-      const radius = 120 + (index * 40);
-      const duration = 15 + Math.random() * 15;
-      const direction = Math.random() > 0.5 ? 'normal' : 'reverse';
-
-      return {
-        ...tech,
-        startAngle,
-        radius,
-        duration,
-        direction,
-        index
-      };
-    });
-
-    setOrbitElements(elements);
-  }, []);
+  useFrame((state) => {
+    if (meshRef.current) {
+      meshRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.3) * 0.2;
+      meshRef.current.position.y = Math.sin(state.clock.elapsedTime * 0.5) * 0.2;
+    }
+  });
 
   return (
-    <div className="avatar-container">
-      <div className="sun-core">
-        <img src="/aziz.png" alt="Sun Image" />
-      </div>
-
-      {orbitElements.map((element) => (
-        <OrbitIcon
-          key={element.name}
-          element={element}
+    <Float speed={1.5} rotationIntensity={0.3} floatIntensity={1.5}>
+      <Sphere ref={meshRef} args={[1.2, 64, 64]} scale={1.2}>
+        <meshStandardMaterial
+          map={texture}
+          metalness={0.3}
+          roughness={0.4}
+          emissive="#FF3838"
+          emissiveIntensity={0.2}
         />
-      ))}
-    </div>
+      </Sphere>
+      {/* Halo autour de la sphère */}
+      <Sphere args={[1.35, 32, 32]}>
+        <meshStandardMaterial
+          color="#FF3838"
+          transparent
+          opacity={0.2}
+          emissive="#FF3838"
+          emissiveIntensity={0.5}
+        />
+      </Sphere>
+    </Float>
   );
 };
 
-const OrbitIcon = ({ element }) => {
-  const [isHovered, setIsHovered] = useState(false);
-
-  useEffect(() => {
-    const style = document.createElement('style');
-    const animationName = `orbit${element.index}`;
-    
-    const keyframes = `
-      @keyframes ${animationName} {
-        from {
-          transform: rotate(${element.startAngle}deg) translateX(${element.radius}px) rotate(-${element.startAngle}deg);
-        }
-        to {
-          transform: rotate(${element.startAngle + 360}deg) translateX(${element.radius}px) rotate(-${element.startAngle + 360}deg);
-        }
-      }
-    `;
-
-    style.textContent = keyframes;
-    document.head.appendChild(style);
-
-    return () => {
-      document.head.removeChild(style);
-    };
-  }, [element]);
-
-  const animationStyle = {
-    transform: `rotate(${element.startAngle}deg) translateX(${element.radius}px) rotate(-${element.startAngle}deg)`,
-    animation: `orbit${element.index} ${element.duration}s linear infinite ${element.direction}`,
-    animationPlayState: isHovered ? 'paused' : 'running'
-  };
+// Composant pour les éléments flottants autour
+const FloatingElements = () => {
+  const elements = [
+    { position: [3, 2, 0], color: '#FF3838', speed: 0.02 },
+    { position: [-3, 2, 0], color: '#FF5C5C', speed: 0.015 },
+    { position: [0, 3, -2], color: '#FF3838', speed: 0.025 },
+    { position: [2, -2, 1], color: '#FF5C5C', speed: 0.018 },
+    { position: [-2, -2, 1], color: '#FF3838', speed: 0.022 },
+    { position: [3, -1, -1], color: '#FF5C5C', speed: 0.02 },
+  ];
 
   return (
-    <button
-      className={`orbit-icon ${element.name} random-orbit`}
-      style={animationStyle}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      type="button"
-    >
-      <img src={element.url} alt={`${element.name} Icon`} />
-    </button>
+    <>
+      {elements.map((elem, index) => (
+        <FloatingSphere
+          key={index}
+          position={elem.position}
+          color={elem.color}
+          speed={elem.speed}
+        />
+      ))}
+    </>
+  );
+};
+
+// Sphère flottante individuelle
+const FloatingSphere = ({ position, color, speed }) => {
+  const meshRef = useRef();
+  const [hovered, setHovered] = useState(false);
+
+  useFrame((state) => {
+    if (meshRef.current) {
+      meshRef.current.rotation.x += speed;
+      meshRef.current.rotation.y += speed * 0.5;
+      meshRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime + position[0]) * 0.3;
+    }
+  });
+
+  return (
+    <Float speed={2} rotationIntensity={0.5} floatIntensity={1}>
+      <mesh
+        ref={meshRef}
+        position={position}
+        onPointerOver={() => setHovered(true)}
+        onPointerOut={() => setHovered(false)}
+        scale={hovered ? 1.2 : 1}
+      >
+        <sphereGeometry args={[0.15, 32, 32]} />
+        <meshStandardMaterial
+          color={color}
+          metalness={0.7}
+          roughness={0.3}
+          emissive={hovered ? color : '#000000'}
+          emissiveIntensity={hovered ? 0.5 : 0}
+        />
+      </mesh>
+    </Float>
   );
 };
 

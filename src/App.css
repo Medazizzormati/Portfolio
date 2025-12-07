@@ -185,7 +185,7 @@
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
 }
 
-/* Avatar and Solar System */
+/* 3D Canvas Container */
 .hero-visual {
   display: flex;
   justify-content: center;
@@ -193,33 +193,30 @@
   animation: slideInRight 1s ease-out;
 }
 
-/* Spline Container */
-.spline-container {
+.canvas-container {
   width: 100%;
   max-width: 600px;
-  height: 450px;
+  height: 500px;
   position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  background: linear-gradient(135deg, rgba(255, 56, 56, 0.1) 0%, rgba(0, 0, 0, 0.3) 100%);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 20px 60px rgba(255, 56, 56, 0.3);
 }
 
-.spline-container canvas {
+.canvas-container canvas {
   width: 100% !important;
   height: 100% !important;
   border: none;
   outline: none;
 }
 
-.spline-placeholder {
-  width: 100%;
-  max-width: 600px;
-  height: 450px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.3);
-  border-radius: 20px;
-  color: var(--muted);
-  text-align: center;
-  padding: 20px;
+@media (max-width: 768px) {
+  .canvas-container {
+    height: 400px;
+    max-width: 100%;
+  }
 }
 
 .avatar-container {
