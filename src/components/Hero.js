@@ -1,8 +1,18 @@
 import React, { useState, useEffect } from 'react';
+import Spline from '@splinetool/react-spline';
 
 const Hero = () => {
   const [currentText, setCurrentText] = useState('');
   const [isTypingComplete, setIsTypingComplete] = useState(false);
+  // Remplacez cette URL par l'URL de production de votre scène Spline
+  // Pour obtenir l'URL de production :
+  // 1. Ouvrez votre scène dans Spline : https://app.spline.design/file/72c13518-b711-4868-b96f-cc783c94fa9c
+  // 2. Cliquez sur le bouton "Export" (en haut à droite)
+  // 3. Sélectionnez "Code" dans le menu
+  // 4. Choisissez "React" comme framework
+  // 5. Copiez l'URL de production qui commence par "https://prod.spline.design/..."
+  // 6. Collez cette URL ci-dessous :
+  const splineSceneUrl = "https://prod.spline.design/your-scene-url.splinecode";
 
   const phrase = 'Engineering Student';
 
@@ -52,7 +62,20 @@ const Hero = () => {
             </div>
           </div>
           <div className="hero-visual">
-            <SolarSystem />
+            {splineSceneUrl && splineSceneUrl !== "https://prod.spline.design/your-scene-url.splinecode" ? (
+              <div className="spline-container">
+                <Spline 
+                  scene={splineSceneUrl}
+                  onError={(error) => {
+                    console.error('Spline error:', error);
+                  }}
+                />
+              </div>
+            ) : (
+              <div className="spline-placeholder">
+                <p>Configurez l'URL de votre scène Spline dans Hero.js</p>
+              </div>
+            )}
           </div>
         </div>
       </div>
