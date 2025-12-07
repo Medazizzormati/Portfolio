@@ -52,7 +52,12 @@ const Contact = () => {
         message: e.target.message.value
       };
 
-      const response = await fetch('/api/send-email', {
+      // Détecter si on est en développement local
+      const apiUrl = window.location.hostname === 'localhost' 
+        ? 'http://localhost:5000/api/send-email' 
+        : '/api/send-email';
+
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -60,17 +65,38 @@ const Contact = () => {
         body: JSON.stringify(formData)
       });
 
+      // Vérifier si la réponse est ok avant de parser JSON
+      if (!response.ok) {
+        let errorData;
+        try {
+          errorData = await response.json();
+        } catch {
+          errorData = { error: `Network error - Status: ${response.status}` };
+        }
+        throw new Error(errorData.error || `Server error: ${response.status}`);
+      }
+
       const data = await response.json();
 
-      if (response.ok && data.success) {
-        showNotification("✅ Message sent successfully!", 'success');
+      if (data.success) {
+        showNotification("✅ Message envoyé avec succès !", 'success');
         e.target.reset();
       } else {
         throw new Error(data.error || 'Failed to send email');
       }
     } catch (error) {
       console.error('Error sending email:', error);
-      showNotification("❌ Failed to send message. Please try again.", 'error');
+      
+      // Messages d'erreur plus explicites
+      let errorMessage = "❌ Échec de l'envoi. Veuillez réessayer.";
+      
+      if (error.message.includes('404') || error.message.includes('Network')) {
+        errorMessage = "⚠️ API non disponible. Le formulaire nécessite un déploiement sur Vercel avec les variables d'environnement configurées.";
+      } else if (error.message.includes('500')) {
+        errorMessage = "❌ Erreur serveur. Vérifiez les variables d'environnement sur Vercel (EMAIL_USER, EMAIL_PASS).";
+      }
+      
+      showNotification(errorMessage, 'error');
     } finally {
       setIsSubmitting(false);
     }
