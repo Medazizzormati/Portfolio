@@ -191,6 +191,9 @@
   justify-content: center;
   align-items: center;
   animation: slideInRight 1s ease-out;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
 }
 
 .spline-container {
@@ -198,19 +201,34 @@
   max-width: 700px;
   height: 600px;
   position: relative;
-  border-radius: 20px;
-  overflow: hidden;
-  background: linear-gradient(135deg, rgba(255, 56, 56, 0.1) 0%, rgba(0, 0, 0, 0.4) 100%);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 20px 60px rgba(255, 56, 56, 0.3);
+  border: none !important;
+  border-radius: 0 !important;
+  overflow: visible;
+  background: transparent !important;
+  backdrop-filter: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
 }
 
 .spline-container canvas {
   width: 100% !important;
   height: 100% !important;
-  border: none;
-  outline: none;
+  border: none !important;
+  border-width: 0 !important;
+  outline: none !important;
+  outline-width: 0 !important;
   display: block;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.spline-container * {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
 }
 
 @media (max-width: 1024px) {
