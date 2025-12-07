@@ -195,14 +195,19 @@
 
 .canvas-container {
   width: 100%;
-  max-width: 600px;
-  height: 500px;
+  max-width: 700px;
+  height: 600px;
   position: relative;
   border-radius: 20px;
   overflow: hidden;
-  background: linear-gradient(135deg, rgba(255, 56, 56, 0.1) 0%, rgba(0, 0, 0, 0.3) 100%);
+  background: linear-gradient(135deg, rgba(255, 56, 56, 0.1) 0%, rgba(0, 0, 0, 0.4) 100%);
   backdrop-filter: blur(10px);
   box-shadow: 0 20px 60px rgba(255, 56, 56, 0.3);
+  cursor: grab;
+}
+
+.canvas-container:active {
+  cursor: grabbing;
 }
 
 .canvas-container canvas {
@@ -210,12 +215,25 @@
   height: 100% !important;
   border: none;
   outline: none;
+  display: block;
+}
+
+@media (max-width: 1024px) {
+  .canvas-container {
+    height: 500px;
+    max-width: 100%;
+  }
 }
 
 @media (max-width: 768px) {
   .canvas-container {
     height: 400px;
-    max-width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .canvas-container {
+    height: 350px;
   }
 }
 

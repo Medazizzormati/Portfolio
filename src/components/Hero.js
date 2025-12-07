@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Canvas, useFrame, useLoader } from '@react-three/fiber';
-import { OrbitControls, Sphere, Float, useTexture } from '@react-three/drei';
+import { Canvas, useFrame } from '@react-three/fiber';
+import { OrbitControls, Environment, PerspectiveCamera } from '@react-three/drei';
 import * as THREE from 'three';
 
 const Hero = () => {
@@ -55,26 +55,37 @@ const Hero = () => {
           </div>
           <div className="hero-visual">
             <div className="canvas-container">
-              <Canvas camera={{ position: [0, 0, 5], fov: 50 }}>
-                <ambientLight intensity={0.5} />
-                <directionalLight position={[10, 10, 5]} intensity={1} />
-                <pointLight position={[-10, -10, -5]} intensity={0.5} />
-                
-                {/* Photo centrale avec effet 3D */}
-                <CenterSphere />
-
-                {/* Éléments flottants autour */}
-                <FloatingElements />
-                
-                {/* Contrôles pour interaction */}
-                <OrbitControls 
-                  enableZoom={false} 
-                  enablePan={false}
-                  autoRotate
-                  autoRotateSpeed={0.5}
-                  maxPolarAngle={Math.PI / 2}
-                  minPolarAngle={Math.PI / 2}
+              <Canvas shadows>
+                <PerspectiveCamera makeDefault position={[0, 1, 5]} fov={45} />
+                <ambientLight intensity={0.4} />
+                <directionalLight
+                  position={[5, 8, 5]}
+                  intensity={1}
+                  castShadow
+                  shadow-mapSize-width={2048}
+                  shadow-mapSize-height={2048}
                 />
+                <pointLight position={[-5, 5, -5]} intensity={0.5} />
+                <pointLight position={[5, 3, 5]} intensity={0.3} color="#FF3838" />
+                
+                {/* Scène 3D du bureau */}
+                <DeskScene />
+
+                {/* Contrôles interactifs - Rotation, Zoom, Pan */}
+                <OrbitControls
+                  enableZoom={true}
+                  enablePan={true}
+                  enableRotate={true}
+                  minDistance={3}
+                  maxDistance={10}
+                  minPolarAngle={0}
+                  maxPolarAngle={Math.PI / 1.8}
+                  autoRotate={false}
+                  enableDamping={true}
+                  dampingFactor={0.05}
+                />
+                
+                <Environment preset="sunset" />
               </Canvas>
             </div>
           </div>
@@ -84,100 +95,153 @@ const Hero = () => {
   );
 };
 
-// Sphère centrale avec photo
-const CenterSphere = () => {
-  const texture = useTexture('/aziz.png');
-  const meshRef = useRef();
-
-  useFrame((state) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.3) * 0.2;
-      meshRef.current.position.y = Math.sin(state.clock.elapsedTime * 0.5) * 0.2;
-    }
-  });
-
+// Scène complète du bureau professionnel
+const DeskScene = () => {
   return (
-    <Float speed={1.5} rotationIntensity={0.3} floatIntensity={1.5}>
-      <Sphere ref={meshRef} args={[1.2, 64, 64]} scale={1.2}>
-        <meshStandardMaterial
-          map={texture}
-          metalness={0.3}
-          roughness={0.4}
-          emissive="#FF3838"
-          emissiveIntensity={0.2}
+    <group>
+      {/* Plan de travail (Bureau) - Surface en bois clair */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]} receiveShadow>
+        <planeGeometry args={[4, 2]} />
+        <meshStandardMaterial 
+          color="#D4A574" 
+          roughness={0.7}
+          metalness={0.1}
         />
-      </Sphere>
-      {/* Halo autour de la sphère */}
-      <Sphere args={[1.35, 32, 32]}>
-        <meshStandardMaterial
-          color="#FF3838"
-          transparent
-          opacity={0.2}
-          emissive="#FF3838"
-          emissiveIntensity={0.5}
-        />
-      </Sphere>
-    </Float>
+      </mesh>
+
+      {/* Écran d'ordinateur */}
+      <group position={[0, 0.6, -0.3]}>
+        {/* Support de l'écran */}
+        <mesh position={[0, -0.3, 0]} castShadow>
+          <boxGeometry args={[0.1, 0.6, 0.1]} />
+          <meshStandardMaterial color="#2a2a2a" metalness={0.8} roughness={0.2} />
+        </mesh>
+        
+        {/* Écran principal */}
+        <mesh position={[0, 0.1, 0]} castShadow>
+          <boxGeometry args={[1.2, 0.7, 0.05]} />
+          <meshStandardMaterial color="#1a1a1a" metalness={0.9} roughness={0.1} />
+        </mesh>
+        
+        {/* Écran allumé */}
+        <mesh position={[0, 0.1, 0.03]}>
+          <planeGeometry args={[1.1, 0.65]} />
+          <meshStandardMaterial 
+            emissive="#00aaff" 
+            emissiveIntensity={0.6}
+            color="#001122"
+          />
+        </mesh>
+      </group>
+
+      {/* Clavier */}
+      <mesh position={[0, 0.08, 0.3]} rotation={[-0.1, 0, 0]} castShadow>
+        <boxGeometry args={[0.8, 0.05, 0.3]} />
+        <meshStandardMaterial color="#333" metalness={0.3} roughness={0.7} />
+      </mesh>
+
+      {/* Souris */}
+      <mesh position={[0.5, 0.08, 0.4]} rotation={[-0.1, 0, 0.1]} castShadow>
+        <boxGeometry args={[0.12, 0.06, 0.18]} />
+        <meshStandardMaterial color="#222" metalness={0.5} roughness={0.6} />
+      </mesh>
+
+      {/* Lampe de bureau */}
+      <group position={[-0.6, 0.5, 0.2]}>
+        <mesh castShadow>
+          <cylinderGeometry args={[0.02, 0.02, 0.4]} />
+          <meshStandardMaterial color="#666" />
+        </mesh>
+        <mesh position={[0, 0.3, 0]} castShadow>
+          <coneGeometry args={[0.15, 0.1, 8]} />
+          <meshStandardMaterial color="#fff" emissive="#FFD700" emissiveIntensity={0.3} />
+        </mesh>
+        {/* Lumière de la lampe */}
+        <pointLight position={[0, 0.35, 0]} intensity={0.8} color="#FFD700" />
+      </group>
+
+      {/* Tasse de café */}
+      <group position={[0.7, 0.15, 0.2]}>
+        <mesh castShadow>
+          <cylinderGeometry args={[0.08, 0.08, 0.12]} />
+          <meshStandardMaterial color="#4a2c1a" />
+        </mesh>
+        <mesh position={[0, 0.08, 0]} castShadow>
+          <torusGeometry args={[0.08, 0.01, 8, 16]} />
+          <meshStandardMaterial color="#8B4513" />
+        </mesh>
+      </group>
+
+      {/* Livre */}
+      <mesh position={[-0.5, 0.1, 0.4]} rotation={[0, 0.5, 0]} castShadow>
+        <boxGeometry args={[0.2, 0.25, 0.15]} />
+        <meshStandardMaterial color="#8B4513" />
+      </mesh>
+
+      {/* Plante */}
+      <group position={[-0.8, 0.15, -0.3]}>
+        <mesh castShadow>
+          <cylinderGeometry args={[0.06, 0.06, 0.15]} />
+          <meshStandardMaterial color="#8B4513" />
+        </mesh>
+        <mesh position={[0, 0.15, 0]} castShadow>
+          <coneGeometry args={[0.12, 0.2, 8]} />
+          <meshStandardMaterial color="#228B22" />
+        </mesh>
+      </group>
+
+      {/* Smartphone */}
+      <mesh position={[0.3, 0.1, 0.5]} rotation={[0.2, 0.3, 0.2]} castShadow>
+        <boxGeometry args={[0.08, 0.15, 0.01]} />
+        <meshStandardMaterial color="#000" metalness={0.9} roughness={0.1} />
+      </mesh>
+
+      {/* Objets décoratifs flottants (technologies) */}
+      <FloatingTechIcons />
+    </group>
   );
 };
 
-// Composant pour les éléments flottants autour
-const FloatingElements = () => {
-  const elements = [
-    { position: [3, 2, 0], color: '#FF3838', speed: 0.02 },
-    { position: [-3, 2, 0], color: '#FF5C5C', speed: 0.015 },
-    { position: [0, 3, -2], color: '#FF3838', speed: 0.025 },
-    { position: [2, -2, 1], color: '#FF5C5C', speed: 0.018 },
-    { position: [-2, -2, 1], color: '#FF3838', speed: 0.022 },
-    { position: [3, -1, -1], color: '#FF5C5C', speed: 0.02 },
+// Icônes de technologies flottantes autour du bureau
+const FloatingTechIcons = () => {
+  const icons = [
+    { position: [1.5, 1, 0], rotation: [0, 0, 0], size: 0.15 },
+    { position: [-1.5, 1, 0], rotation: [0, 0, 0], size: 0.15 },
+    { position: [0, 1.5, 1], rotation: [0, 0, 0], size: 0.12 },
+    { position: [0, 1.5, -1], rotation: [0, 0, 0], size: 0.12 },
   ];
 
   return (
     <>
-      {elements.map((elem, index) => (
-        <FloatingSphere
-          key={index}
-          position={elem.position}
-          color={elem.color}
-          speed={elem.speed}
-        />
+      {icons.map((icon, index) => (
+        <TechIcon key={index} {...icon} />
       ))}
     </>
   );
 };
 
-// Sphère flottante individuelle
-const FloatingSphere = ({ position, color, speed }) => {
+// Icône de technologie individuelle
+const TechIcon = ({ position, rotation, size }) => {
   const meshRef = useRef();
-  const [hovered, setHovered] = useState(false);
 
   useFrame((state) => {
     if (meshRef.current) {
-      meshRef.current.rotation.x += speed;
-      meshRef.current.rotation.y += speed * 0.5;
-      meshRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime + position[0]) * 0.3;
+      meshRef.current.rotation.y += 0.01;
+      meshRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime + position[0]) * 0.1;
     }
   });
 
   return (
-    <Float speed={2} rotationIntensity={0.5} floatIntensity={1}>
-      <mesh
-        ref={meshRef}
-        position={position}
-        onPointerOver={() => setHovered(true)}
-        onPointerOut={() => setHovered(false)}
-        scale={hovered ? 1.2 : 1}
-      >
-        <sphereGeometry args={[0.15, 32, 32]} />
-        <meshStandardMaterial
-          color={color}
-          metalness={0.7}
-          roughness={0.3}
-          emissive={hovered ? color : '#000000'}
-          emissiveIntensity={hovered ? 0.5 : 0}
-        />
-      </mesh>
-    </Float>
+    <mesh ref={meshRef} position={position} rotation={rotation} scale={size}>
+      <octahedronGeometry args={[1, 0]} />
+      <meshStandardMaterial
+        color="#FF3838"
+        metalness={0.8}
+        roughness={0.2}
+        emissive="#FF3838"
+        emissiveIntensity={0.3}
+      />
+    </mesh>
   );
 };
 
