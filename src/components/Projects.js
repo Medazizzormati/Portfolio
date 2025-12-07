@@ -37,11 +37,11 @@ const Projects = () => {
     {
       id: 2,
       title: 'Plateforme Médicale Intelligente',
-      description: 'Développement d\'une plateforme web de gestion des rendez-vous médicaux avec React.js, Spring Boot et IA pour la priorisation automatique des cas.',
+      description: 'Développement d\'une plateforme web de gestion des rendez-vous médicaux avec React.js, Spring Boot et IA pour la priorisation automatique des cas. Implémentation d\'algorithmes de priorisation intelligente des urgences médicales.',
       image: '/Cleveroad.jpg',
-      technologies: ['React.js', 'Spring Boot', 'Python', 'IA'],
+      technologies: ['React.js', 'Spring Boot', 'Python', 'IA', 'Jira', 'Agile/Scrum'],
       liveDemo: '#',
-      github: '#'
+      github: 'https://github.com/Medazizzormati/Gestion-des-Rendez-vous-M-dicaux'
     },
     {
       id: 3,
