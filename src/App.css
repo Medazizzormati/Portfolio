@@ -193,7 +193,7 @@
   animation: slideInRight 1s ease-out;
 }
 
-.canvas-container {
+.spline-container {
   width: 100%;
   max-width: 700px;
   height: 600px;
@@ -203,14 +203,9 @@
   background: linear-gradient(135deg, rgba(255, 56, 56, 0.1) 0%, rgba(0, 0, 0, 0.4) 100%);
   backdrop-filter: blur(10px);
   box-shadow: 0 20px 60px rgba(255, 56, 56, 0.3);
-  cursor: grab;
 }
 
-.canvas-container:active {
-  cursor: grabbing;
-}
-
-.canvas-container canvas {
+.spline-container canvas {
   width: 100% !important;
   height: 100% !important;
   border: none;
