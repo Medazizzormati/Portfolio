@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import emailjs from 'emailjs-com';
 import './Contact.css';
 
 const Contact = () => {
@@ -45,18 +44,29 @@ const Contact = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Use EmailJS (more reliable)
+    // Use backend API (Vercel serverless function)
     try {
-      const result = await emailjs.sendForm(
-        "service_jtnlzjh",
-        "template_1g0ebr8",
-        e.target,
-        "sm08AnEPv9i2Vfjzu"
-      );
-      
-      if (result.status === 200) {
+      const formData = {
+        name: e.target.user_name.value,
+        email: e.target.user_email.value,
+        message: e.target.message.value
+      };
+
+      const response = await fetch('/api/send-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
         showNotification("✅ Message sent successfully!", 'success');
         e.target.reset();
+      } else {
+        throw new Error(data.error || 'Failed to send email');
       }
     } catch (error) {
       console.error('Error sending email:', error);
