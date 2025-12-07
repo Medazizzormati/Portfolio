@@ -36,7 +36,14 @@ const Hero = () => {
             </h1>
             <p className="hero-quote">Développeur full-stack passionné, spécialisé en développement web et mobile avec intégration d'IA</p>
             <div className="hero-buttons">
-              <button className="glow-genz-button">Download CV</button>
+              <a 
+                href="/assets/Mohamed_aziz_zormati_CV.pdf" 
+                download="Mohamed_Aziz_ZORMATI_CV.pdf"
+                className="glow-genz-button"
+                style={{ textDecoration: 'none', display: 'inline-block' }}
+              >
+                Download CV
+              </a>
             </div>
             <div className="hero-social">
               <a href="https://www.linkedin.com/in/mohamed-aziz-zormati" className="social-link" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer">
